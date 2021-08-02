@@ -27,7 +27,7 @@
                 <v-col sm="10">
                     <v-form ref="form" @submit.prevent="submit">
                         <label>建立時間：</label>
-                        <span>Date</span>
+                        <span>{{modified_time}} </span>
                         <br>
                         <label>項目編號：</label>
                         <span>{{to_do_id}}</span>
@@ -45,7 +45,8 @@
                          label="預約時間" 
                          outlined
                          dense
-                         type="datetime"
+                         type="text"
+                         placeholder="格式：YYYY-MM-DD HH:MM:SS"
                          v-model="reserved_time"
                         >
                             {{reserved_time}}
@@ -112,9 +113,10 @@
 export default {
     data() {
         return {
-            degree: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+            degree: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
             to_do_id: '',
             subject: '',
+            modified_time: '',
             reserved_time: '',
             level: '',
             brief: '',
@@ -122,10 +124,21 @@ export default {
             content: '',
         };
     },
-    computed:{
-
-    },
     methods: {
+        timeFormat(timeStamp) {
+            let newdate = new Date(timeStamp);
+            let year = newdate.getFullYear();
+            let month = newdate.getMonth() + 1 < 10 ? "0" + (newdate.getMonth() + 1) : newdate.getMonth() +1;
+            let date = newdate.getDate() < 10 ? "0" + newdate.getDate() : newdate.getDate;
+            let hh = newdate.getHours() < 10 ? "0" + newdate.getHours() : newdate.getHours();
+            let mm = newdate.getMinutes() < 10 ? "0" + newdate.getMinutes() : newdate.getMinutes();
+            let ss = newdate.getSeconds() < 10 ? "0" + newdate.getSeconds() : newdate.getSeconds();
+
+            this.modified_time = year + "-" + month + "-" + date + " " + hh + ":" + mm + ":" + ss;
+        },
+        nowTimes() {
+            this.timeFormat(new Date());
+        },
         logout() {
             this.$router.push('/login');
         },
@@ -133,7 +146,7 @@ export default {
             this.$router.push('/');
         },
         submit() {
-            this.$axios.put(`/api/to-do-list/detail/to_do_list=${this.to_do_id}`, {
+            this.$axios.put(`/api/to-do-list/detail/${this.to_do_id}`, {
                 to_do_id: this.to_do_id,
                 subject: this.subject,
                 reserved_time: this.reserved_time,
@@ -152,6 +165,8 @@ export default {
         this.$axios.get('/api/to-do-list/the-newest-id')
         .then(res => {
             this.to_do_id = res.data.result;
+            this.nowTimes();
+
         })
     },
 }

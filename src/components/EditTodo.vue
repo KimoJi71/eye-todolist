@@ -27,10 +27,10 @@
                 <v-col sm="10">
                     <v-form ref="form">
                         <label>編輯時間：</label>
-                        <span>{{todoDatas.modified_time}}</span>
+                        <span></span>
                         <br>
                         <label>項目編號：</label>
-                        <span>{{todoDatas.to_do_id}}</span>
+                        <span>{{todoID}}</span>
                         <br><br>
                         <v-text-field
                          label="主題" 
@@ -38,7 +38,7 @@
                          dense
                          type="text"
                         >
-                            {{todoDatas.subject}}
+                            <!-- {{todoDatas.subject}} -->
                         </v-text-field>
                         <v-text-field
                          label="預約時間" 
@@ -46,7 +46,7 @@
                          dense
                          type="date"
                         >
-                            {{todoDatas.reserved_time}}
+                            <!-- {{todoDatas.reserved_time}} -->
                         </v-text-field>
                         <v-select
                          :items="degree"
@@ -54,7 +54,7 @@
                          outlined
                          dense
                         >
-                            {{todoDatas.level}}
+                            <!-- {{todoDatas.level}} -->
                         </v-select>
                         <v-text-field
                          label="簡介" 
@@ -62,7 +62,7 @@
                          dense
                          type="text"
                         >
-                            {{todoDatas.brief}}
+                            <!-- {{todoDatas.brief}} -->
                         </v-text-field>
                         <v-text-field
                          label="撰寫者" 
@@ -70,7 +70,7 @@
                          dense
                          type="text"
                         >
-                            {{todoDatas.author}}
+                            <!-- {{todoDatas.author}} -->
                         </v-text-field>
                         <v-textarea
                          label="詳細內容" 
@@ -78,7 +78,7 @@
                          dense
                          type="text"
                         >
-                            {{todoDatas.content}}
+                            <!-- {{todoDatas.content}} -->
                         </v-textarea>
                         <v-btn
                         class="mr-5"
@@ -104,9 +104,10 @@
 
 <script>
 export default {
-    props: ['todoDatas'],
+    props: ['todoID'],
     data() {
         return {
+            todoDetail: [],
             degree: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
         };
     },
@@ -117,6 +118,13 @@ export default {
         backTodo() {
             this.$router.push('/');
         },
+    },
+    mounted() {
+        this.$axios.get(`/to-do-list/detail/10002`)
+        .then(res => {
+            console.log(res)
+            this.todoDetail = res.data.result;
+        })
     },
 }
 </script>

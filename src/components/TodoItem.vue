@@ -4,8 +4,6 @@
         <td
          class="blue--text"
          @click="editTodo"
-         :todoID="todoID"
-         :todoDatas="todoDatas"
         >
             <u color="blue">{{todo.subject}}</u>
         </td>
@@ -30,21 +28,15 @@
 
 export default {
     props: ['todo'],
-    data() {
-        return {
-            todoDatas: [],
-            todoID: this.to_do_id,
-        };
-    },
     methods: {
         editTodo() {
             this.$router.push('/edit-todo');
         },
         deleteTodo() {
-            this.$axios.delete(`/api/to-do-list/detail/to_do_id=${this.todoID}`)
+            this.$axios.delete(`/api/to-do-list/detail/${this.todo.to_do_id}`)
             .then(res => {
                 if(res.data.message == "ok.") {
-                    this.$emit("delete-todo");
+                    this.$emit('delete-todo');
                 }
             })
         }
