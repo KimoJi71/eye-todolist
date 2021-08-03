@@ -35,7 +35,7 @@
                     <v-divider></v-divider>
                 </v-row>
                 <v-row class="ma-5" align="center" justify="center">
-                    <v-simple-table>
+                    <v-simple-table fixed-header height="400">
                         <template>
                             <thead>
                                 <tr>

@@ -56,10 +56,8 @@
                          label="重要程度" 
                          outlined
                          dense
-                         v-model="todoDetail.level"
-                         :value.sync="todoDetail.level"
+                         v-model="level"
                         >
-                            {{todoDetail.level}}
                         </v-select>
                         <v-text-field
                          label="簡介" 
@@ -114,6 +112,7 @@
 export default {
     data() {
         return {
+            level: '',
             todoDetail: [],
             modified_time: '',
             degree: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
@@ -160,8 +159,7 @@ export default {
         this.$axios.get(`/api/to-do-list/detail/${this.$route.params.to_do_id}?type=json`)
         .then(res => {
             this.todoDetail = res.data.result;
-            this.fetchLevel = res.data.result.level;
-            this.localLevel = this.fetchLevel;
+            this.level = res.data.result.level;
             this.nowTimes();
         })
     },
