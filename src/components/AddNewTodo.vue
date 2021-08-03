@@ -128,10 +128,10 @@ export default {
             this.timeFormat(new Date());
         },
         logout() {
-            this.$router.push('/login');
+            this.$router.push('/');
         },
         backTodo() {
-            this.$router.push('/');
+            this.$router.push('/todo-list');
         },
         submit() {
             this.$axios.put(`/api/to-do-list/detail/${this.to_do_id}`, {
@@ -144,7 +144,7 @@ export default {
                 content: this.content,
             }).then(res => {
                 if(res.data.message == "ok.") {
-                    this.$router.push('/');
+                    this.$router.push('/todo-list');
                 }
             })
         },

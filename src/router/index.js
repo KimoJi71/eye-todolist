@@ -9,11 +9,11 @@ Vue.use(VueRouter)
 
 const routes = [
   {
-    path: '/login',
+    path: '/',
     component: Login,
   },
   {
-    path: '/',
+    path: '/todo-list',
     component:TodoList,
   },
   {

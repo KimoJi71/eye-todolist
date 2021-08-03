@@ -74,7 +74,7 @@ export default {
       })
       .then(response => {
         if(response.data.message == "ok. 您現在可存取 API.") {
-          this.$router.push('/');
+          this.$router.push('/todo-list');
         }
       })
       .catch(err => {

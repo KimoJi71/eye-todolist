@@ -145,12 +145,12 @@ export default {
                 content: this.todoDetail.content,
             }).then(res => {
                 if(res.data.message == "ok.") {
-                    this.$router.push('/');
+                    this.$router.push('/todo-list');
                 }
             })
         },
         backTodo() {
-            this.$router.push('/');
+            this.$router.push('/todo-list');
         },
     },
     mounted() {
