@@ -21,7 +21,7 @@ const routes = [
     component: AddNewTodo,
   },
   {
-    path: '/edit-todo',
+    path: '/edit-todo/:to_do_id',
     component: EditTodo,
   },
 ]

@@ -27,7 +27,7 @@
                 <v-col sm="10">
                     <v-form ref="form" @submit.prevent="submit">
                         <label>建立時間：</label>
-                        <span>{{modified_time}} </span>
+                        <span>{{modified_time}}</span>
                         <br>
                         <label>項目編號：</label>
                         <span>{{to_do_id}}</span>
@@ -166,7 +166,6 @@ export default {
         .then(res => {
             this.to_do_id = res.data.result;
             this.nowTimes();
-
         })
     },
 }

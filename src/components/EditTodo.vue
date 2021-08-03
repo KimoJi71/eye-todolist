@@ -27,10 +27,10 @@
                 <v-col sm="10">
                     <v-form ref="form">
                         <label>編輯時間：</label>
-                        <span></span>
+                        <span>{{modified_time}}</span>
                         <br>
                         <label>項目編號：</label>
-                        <span>{{todoID}}</span>
+                        <span>{{todoDetail.to_do_id}}</span>
                         <br><br>
                         <v-text-field
                          label="主題" 
@@ -108,10 +108,25 @@ export default {
     data() {
         return {
             todoDetail: [],
+            modified_time: '',
             degree: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
         };
     },
     methods: {
+        timeFormat(timeStamp) {
+            let newdate = new Date(timeStamp);
+            let year = newdate.getFullYear();
+            let month = newdate.getMonth() + 1 < 10 ? "0" + (newdate.getMonth() + 1) : newdate.getMonth() +1;
+            let date = newdate.getDate() < 10 ? "0" + newdate.getDate() : newdate.getDate;
+            let hh = newdate.getHours() < 10 ? "0" + newdate.getHours() : newdate.getHours();
+            let mm = newdate.getMinutes() < 10 ? "0" + newdate.getMinutes() : newdate.getMinutes();
+            let ss = newdate.getSeconds() < 10 ? "0" + newdate.getSeconds() : newdate.getSeconds();
+
+            this.modified_time = year + "-" + month + "-" + date + " " + hh + ":" + mm + ":" + ss;
+        },
+        nowTimes() {
+            this.timeFormat(new Date());
+        },
         logout() {
             this.$router.push('/login');
         },
@@ -120,10 +135,9 @@ export default {
         },
     },
     mounted() {
-        this.$axios.get(`/to-do-list/detail/10002`)
+        this.$axios.get(`/api/to-do-list/detail/${this.$route.params.to_do_id}`)
         .then(res => {
-            console.log(res)
-            this.todoDetail = res.data.result;
+            console.log(res);
         })
     },
 }

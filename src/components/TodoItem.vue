@@ -30,7 +30,7 @@ export default {
     props: ['todo'],
     methods: {
         editTodo() {
-            this.$router.push('/edit-todo');
+            this.$router.push(`/edit-todo/${this.todo.to_do_id}`);
         },
         deleteTodo() {
             this.$axios.delete(`/api/to-do-list/detail/${this.todo.to_do_id}`)
