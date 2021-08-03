@@ -25,7 +25,7 @@
             </v-row>
             <v-row class="ma-5" align="center" justify="center">
                 <v-col sm="10">
-                    <v-form ref="form">
+                    <v-form @submit.prevent="submit">
                         <label>編輯時間：</label>
                         <span>{{modified_time}}</span>
                         <br>
@@ -37,48 +37,56 @@
                          outlined
                          dense
                          type="text"
+                         v-model="todoDetail.subject"
                         >
-                            <!-- {{todoDatas.subject}} -->
+                            {{todoDetail.subject}}
                         </v-text-field>
                         <v-text-field
                          label="預約時間" 
                          outlined
                          dense
-                         type="date"
+                         type="text"
+                         placeholder="格式：YYYY-MM-DD HH:MM:SS"
+                         v-model="todoDetail.reserved_time"
                         >
-                            <!-- {{todoDatas.reserved_time}} -->
+                            {{todoDetail.reserved_time}}
                         </v-text-field>
                         <v-select
                          :items="degree"
                          label="重要程度" 
                          outlined
                          dense
+                         v-model="todoDetail.level"
+                         :value.sync="todoDetail.level"
                         >
-                            <!-- {{todoDatas.level}} -->
+                            {{todoDetail.level}}
                         </v-select>
                         <v-text-field
                          label="簡介" 
                          outlined
                          dense
                          type="text"
+                         v-model="todoDetail.brief"
                         >
-                            <!-- {{todoDatas.brief}} -->
+                            {{todoDetail.brief}}
                         </v-text-field>
                         <v-text-field
                          label="撰寫者" 
                          outlined
                          dense
                          type="text"
+                         v-model="todoDetail.author"
                         >
-                            <!-- {{todoDatas.author}} -->
+                            {{todoDetail.author}}
                         </v-text-field>
                         <v-textarea
                          label="詳細內容" 
                          outlined
                          dense
                          type="text"
+                         v-model="todoDetail.content"
                         >
-                            <!-- {{todoDatas.content}} -->
+                            {{todoDetail.content}}
                         </v-textarea>
                         <v-btn
                         class="mr-5"
@@ -104,12 +112,11 @@
 
 <script>
 export default {
-    props: ['todoID'],
     data() {
         return {
             todoDetail: [],
             modified_time: '',
-            degree: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
+            degree: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10'],
         };
     },
     methods: {
@@ -130,14 +137,32 @@ export default {
         logout() {
             this.$router.push('/login');
         },
+        submit() {
+            this.$axios.put(`/api/to-do-list/detail/${this.todoDetail.to_do_id}`, {
+                to_do_id: this.todoDetail.to_do_id,
+                subject: this.todoDetail.subject,
+                reserved_time: this.todoDetail.reserved_time,
+                level: this.todoDetail.level,
+                brief: this.todoDetail.brief,
+                author: this.todoDetail.author,
+                content: this.todoDetail.content,
+            }).then(res => {
+                if(res.data.message == "ok.") {
+                    this.$router.push('/');
+                }
+            })
+        },
         backTodo() {
             this.$router.push('/');
         },
     },
     mounted() {
-        this.$axios.get(`/api/to-do-list/detail/${this.$route.params.to_do_id}`)
+        this.$axios.get(`/api/to-do-list/detail/${this.$route.params.to_do_id}?type=json`)
         .then(res => {
-            console.log(res);
+            this.todoDetail = res.data.result;
+            this.fetchLevel = res.data.result.level;
+            this.localLevel = this.fetchLevel;
+            this.nowTimes();
         })
     },
 }

@@ -61,6 +61,7 @@
 export default {
   data() {
     return {
+      valid: true,
       account: '',
       passwd: '',
     };

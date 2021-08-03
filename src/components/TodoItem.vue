@@ -33,12 +33,14 @@ export default {
             this.$router.push(`/edit-todo/${this.todo.to_do_id}`);
         },
         deleteTodo() {
-            this.$axios.delete(`/api/to-do-list/detail/${this.todo.to_do_id}`)
-            .then(res => {
-                if(res.data.message == "ok.") {
-                    this.$emit('delete-todo');
-                }
-            })
+            if(confirm('將刪除編號 ' + this.todo.to_do_id + '，確定要刪除嗎？') == true) {
+                this.$axios.delete(`/api/to-do-list/detail/${this.todo.to_do_id}`)
+                .then(res => {
+                    if(res.data.message == "ok.") {
+                        this.$emit('delete-todo');
+                    }
+                })
+            }
         }
     },
 }
