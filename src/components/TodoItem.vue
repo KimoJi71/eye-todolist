@@ -1,11 +1,8 @@
 <template>
     <tr>
         <td>{{todo.to_do_id}}</td>
-        <td
-         class="blue--text"
-         @click="editTodo"
-        >
-            <u color="blue">{{todo.subject}}</u>
+        <td>
+            <router-link :to="{name: `edit-todo`, params: {to_do_id: todo.to_do_id}}">{{todo.subject}}</router-link>
         </td>
         <td>{{todo.reserved_time}}</td>
         <td>{{todo.brief}}</td>
@@ -29,9 +26,6 @@
 export default {
     props: ['todo'],
     methods: {
-        editTodo() {
-            this.$router.push(`/edit-todo/${this.todo.to_do_id}`);
-        },
         deleteTodo() {
             if(confirm('將刪除編號 ' + this.todo.to_do_id + '，確定要刪除嗎？') == true) {
                 this.$axios.delete(`/api/to-do-list/detail/${this.todo.to_do_id}`)

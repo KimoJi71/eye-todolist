@@ -10,24 +10,27 @@ Vue.use(VueRouter)
 const routes = [
   {
     path: '/',
+    name: 'login',
     component: Login,
   },
   {
     path: '/todo-list',
+    name: 'todo-list',
     component:TodoList,
   },
   {
     path: '/add-todo',
+    name: 'add-todo',
     component: AddNewTodo,
   },
   {
     path: '/edit-todo/:to_do_id',
+    name: 'edit-todo',
     component: EditTodo,
   },
 ]
 
 const router = new VueRouter({
-  base: process.env.BASE_URL,
   routes,
   mode: 'history',
 })

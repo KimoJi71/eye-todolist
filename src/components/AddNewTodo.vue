@@ -1,13 +1,6 @@
 <template>
     <div>
-        <v-app-bar
-         color="blue-gray"
-         dark
-        >
-            <v-spacer></v-spacer>
-            <v-icon>mdi-account</v-icon>
-            <v-btn @click="logout">登出</v-btn>
-        </v-app-bar>
+        <Header></Header>
         <v-container class="fill-height mt-10" fluid>
             <v-row  align="center" justify="center" no-gutters>
                 <v-col sm="10" md="20">
@@ -44,7 +37,7 @@
                          outlined
                          dense
                          type="text"
-                         placeholder="格式：YYYY-MM-DD HH:MM:SS"
+                         placeholder="格式：YYYY-MM-DD HH:MM"
                          v-model="reserved_time"
                         ></v-text-field>
                         <v-select
@@ -98,7 +91,12 @@
 </template>
 
 <script>
+import Header from './Header.vue';
+
 export default {
+    components: {
+        Header,
+    },
     data() {
         return {
             degree: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -117,7 +115,7 @@ export default {
             let newdate = new Date(timeStamp);
             let year = newdate.getFullYear();
             let month = newdate.getMonth() + 1 < 10 ? "0" + (newdate.getMonth() + 1) : newdate.getMonth() +1;
-            let date = newdate.getDate() < 10 ? "0" + newdate.getDate() : newdate.getDate;
+            let date = newdate.getDate() < 10 ? "0" + newdate.getDate() : newdate.getDate();
             let hh = newdate.getHours() < 10 ? "0" + newdate.getHours() : newdate.getHours();
             let mm = newdate.getMinutes() < 10 ? "0" + newdate.getMinutes() : newdate.getMinutes();
             let ss = newdate.getSeconds() < 10 ? "0" + newdate.getSeconds() : newdate.getSeconds();
@@ -126,9 +124,6 @@ export default {
         },
         nowTimes() {
             this.timeFormat(new Date());
-        },
-        logout() {
-            this.$router.push('/');
         },
         backTodo() {
             this.$router.push('/todo-list');
