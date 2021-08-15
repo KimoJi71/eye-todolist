@@ -11,8 +11,7 @@
                     <v-col cols="12" md="12">
                       <v-card-text class="mt-5">
                         <h1 class="text-center
-                         display-1
-                         blue-gray--text"
+                         display-1"
                         >
                           系統登入
                         </h1>
@@ -22,21 +21,25 @@
                              label="帳號"
                              prepend-icon="mdi-account"
                              type="text"
-                             color="blue-gray"
+                             color="black"
                              v-model="account"
                             >
                             </v-text-field>
                             <v-text-field
                              label="密碼"
                              prepend-icon="mdi-lock"
-                             type="password"
-                             color="blue-gray"
+                             :append-icon="show ? 'mdi-eye' : 'mdi-eye-off'"
+                             :type="show ? 'text' : 'password'"
+                             color="black"
                              v-model="passwd"
+                             @click:append="show = !show"
                             >
                             </v-text-field>
+                            <span class="red--text" v-if="error">{{error}}</span>
+                            <br v-if="error"><br v-if="error">
                             <v-btn
                              elevation="2"
-                             large color="blue-gray"
+                             large
                              dark
                              type="submit"
                             >
@@ -61,35 +64,46 @@
 export default {
   data() {
     return {
-      valid: true,
+      //是否顯示密碼
+      show: false,
+      //檢查帳號密碼
+      error: '',
+      //會員資料
       account: '',
-      passwd: '',
-    };
+      passwd: ''
+    }
   },
   methods: {
+    //會員登入
     login() {
       this.$axios.post('/api/auth', {
         account: this.account,
-        passwd: this.passwd,
+        passwd: this.passwd
       })
       .then(response => {
-        if(response.data.message == "ok. 您現在可存取 API.") {
-          this.$router.push('/todo-list');
+        if(response.status === 200) {
+          this.$router.push({name: 'todo-list'})
         }
       })
       .catch(err => {
-        alert('登入失敗，請重新嘗試！');
-        console.log(err);
+        if(err.response.status === 400) {
+          this.error = '帳號密碼欄位有誤'
+        } else if(err.response.status === 500) {
+          alert('Server 端錯誤')
+        } else {
+          alert('不明錯誤')
+        }
       })
-    },
+    }
   },
   watch: {
+    //重置error
     account() {
-      this.error = '';
+      this.error = ''
     },
     passwd() {
-      this.error = '';
-    },
-  },
-};
+      this.error = ''
+    }
+  }
+}
 </script>

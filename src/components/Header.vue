@@ -1,12 +1,14 @@
 <template>
     <div>
         <v-app-bar
-         color="blue-gray"
          dark
         >
+            <v-toolbar-title>Eye TodoList</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-icon>mdi-account</v-icon>
-            <v-btn @click="logout">登出</v-btn>
+            <v-btn @click="logout">
+                <v-icon class="mr-2">mdi-account-circle</v-icon>
+                登出
+            </v-btn>
         </v-app-bar>
     </div>
 </template>
@@ -15,8 +17,8 @@
 export default {
     methods: {
         logout() {
-            this.$router.push('/');
-        },
-    },
-};
+            this.$router.push({name: 'login'})
+        }
+    }
+}
 </script>
