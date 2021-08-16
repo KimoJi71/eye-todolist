@@ -36,7 +36,7 @@
                     x-small
                     v-bind="attrs"
                     v-on="on"
-                    @click="openDialog"
+                    @click.stop="openUpdateDialog"
                     >
                         <v-icon>mdi-trash-can-outline</v-icon>
                     </v-btn>
@@ -44,36 +44,36 @@
                 <span>刪除</span>
             </v-tooltip>
         </td>
-        <ConfirmDialog
+        <UpdateConfirmDialog
         :action="`刪除編號${todo.to_do_id}`"
-        :visible="dialogVisible"
-        @onCancel="closeDialog"
-        @onConfirm="deleteTodo"
-        ></ConfirmDialog>
+        :visible="updateDialogVisible"
+        @onCancel="closeUpdateDialog"
+        @onConfirm="(closeUpdateDialog(), deleteTodo())"
+        ></UpdateConfirmDialog>
     </tr>
 </template>
 
 <script>
-import ConfirmDialog from '../components/ConfirmDialog.vue'
+import UpdateConfirmDialog from './UpdateConfirmDialog.vue'
 
 export default {
     props: ['todo'],
     components: {
-        ConfirmDialog
+        UpdateConfirmDialog
     },
     data() {
         return {
             //Dialog視窗
-            dialogVisible: false
+            updateDialogVisible: false
         }
     },
     methods: {
         //Dialog視窗
-        openDialog() {
-            this.dialogVisible = true
+        openUpdateDialog() {
+            this.updateDialogVisible = true
         },
-        closeDialog() {
-            this.dialogVisible = false
+        closeUpdateDialog() {
+            this.updateDialogVisible = false
         },
         //編輯
         editTodo() {
@@ -84,6 +84,7 @@ export default {
             this.$axios.delete(`/api/to-do-list/detail/${this.todo.to_do_id}`)
             .then(res => {
                 if(res.data.message === "ok.") {
+                    window.localStorage.setItem('isDeleteSuccess', 'true')
                     this.$emit('delete-todo')
                 }
             })

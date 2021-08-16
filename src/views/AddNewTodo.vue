@@ -1,6 +1,7 @@
 <template>
     <div>
         <Header></Header>
+        <!-- Todo欄位資料 -->
         <v-container class="fill-height mt-10" fluid>
             <v-row  align="center" justify="center" no-gutters>
                 <v-col sm="10" md="20">
@@ -12,7 +13,7 @@
             </v-row>
             <v-row class="ma-5" align="center" justify="center">
                 <v-col sm="10">
-                    <v-form @submit.prevent="submit" v-model="valid">
+                    <v-form v-model="valid">
                         <v-row>
                             <v-col cols="12" sm="6">
                                 <label>建立時間：</label>
@@ -90,14 +91,14 @@
                             <v-btn
                              class="mr-5"
                              color="success"
-                             type="submit"
                              :disabled="!valid"
+                             @click.stop="openUpdateDialog"
                             >
                                 儲存
                             </v-btn>
                             <v-btn
                              color="warning"
-                             @click="openDialog"
+                             @click.stop="openBackDialog"
                             >
                                 返回
                             </v-btn>
@@ -106,24 +107,33 @@
                 </v-col>                    
             </v-row>
         </v-container>
-        <ConfirmDialog
+        <!-- Dialog視窗 -->
+        <UpdateConfirmDialog
+         :action="'儲存'"
+         :visible="updateDialogVisible"
+         @onCancel="closeUpdateDialog"
+         @onConfirm="submit"
+        ></UpdateConfirmDialog>
+        <BackConfirmDialog
          :action="'返回'"
-         :visible="dialogVisible"
-         @onCancel="closeDialog"
+         :visible="backDialogVisible"
+         @onCancel="closeBackDialog"
          @onConfirm="backTodo"
-        ></ConfirmDialog>
+        ></BackConfirmDialog>
     </div>
 </template>
 
 <script>
 import Header from '../components/Header.vue'
 import timeFormat from '../mixins/timeFormat'
-import ConfirmDialog from '../components/ConfirmDialog.vue'
+import BackConfirmDialog from '../components/BackConfirmDialog.vue'
+import UpdateConfirmDialog from '../components/UpdateConfirmDialog.vue'
 
 export default {
     components: {
         Header,
-        ConfirmDialog
+        UpdateConfirmDialog,
+        BackConfirmDialog
     },
     data() {
         return {
@@ -145,20 +155,40 @@ export default {
                 v => /(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d)/.test(v) || '不符合時間格式',
             ],
             //Dialog視窗
-            dialogVisible: false
+            updateDialogVisible: false,
+            backDialogVisible: false
         }
     },
     methods: {
-        //Dialog視窗
-        openDialog() {
-            this.dialogVisible = true
+        //儲存視窗
+        openUpdateDialog() {
+            this.updateDialogVisible = true
         },
-        closeDialog() {
-            this.dialogVisible = false
+        closeUpdateDialog() {
+            this.updateDialogVisible = false
+        },
+        //返回視窗
+        openBackDialog() {
+            this.backDialogVisible = true
+        },
+        closeBackDialog() {
+            this.backDialogVisible = false
         },
         //返回
         backTodo() {
             this.$router.push({name: 'todo-list'})
+        },
+        //錯誤處理
+        catchErr(err) {
+            if(err.response.status === 401) {
+                if(confirm('請先登入') === true) {
+                    this.$router.push({name: 'login'})
+                }
+            } else if(err.response.status === 500) {
+                alert('Server 端錯誤')
+            } else {
+                alert('不明錯誤')
+            }
         },
         //儲存
         submit() {
@@ -173,19 +203,12 @@ export default {
             })
             .then(res => {
                 if(res.data.message == "ok.") {
+                    window.localStorage.setItem('isAddSuccess', 'true')
                     this.$router.push({name: 'todo-list'})
                 }
             })
             .catch(err => {
-                if(err.response.status === 401) {
-                    if(confirm('請先登入') === true) {
-                        this.$router.push({name: 'login'})
-                    }
-                } else if(err.response.status === 500) {
-                    alert('Server 端錯誤')
-                } else {
-                    alert('不明錯誤')
-                }
+                this.catchErr(err)
             })
         }
     },
@@ -198,15 +221,7 @@ export default {
             this.modified_time = this.timeFormat(new Date)
         })
         .catch(err => {
-            if(err.response.status === 401) {
-                if(confirm('請先登入') === true) {
-                    this.$router.push({name: 'login'})
-                }
-            } else if(err.response.status === 500) {
-                alert('Server 端錯誤')
-            } else {
-                alert('不明錯誤')
-            }
+            this.catchErr(err)
         })
     }
 }

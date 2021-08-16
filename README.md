@@ -1,16 +1,20 @@
 # eye-todolist
 
-## Project setup
+## 下載套件
 ```
 yarn install
 ```
 
-### Compiles and hot-reloads for development
+### 編譯程式、啟動 Server
 ```
 yarn serve
 ```
 
-### Compiles and minifies for production
+### 輸入網址
+```
+http://localhost:80804
+```
+<!-- ### Compiles and minifies for production
 ```
 yarn build
 ```
@@ -21,4 +25,4 @@ yarn lint
 ```
 
 ### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+See [Configuration Reference](https://cli.vuejs.org/config/). -->

@@ -5,7 +5,7 @@
         >
             <v-toolbar-title>Eye TodoList</v-toolbar-title>
             <v-spacer></v-spacer>
-            <v-btn @click="logout">
+            <v-btn color="white" text @click.prevent="logout">
                 <v-icon class="mr-2">mdi-account-circle</v-icon>
                 登出
             </v-btn>

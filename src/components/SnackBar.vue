@@ -1,6 +1,7 @@
 <template>
     <v-snackbar
      color="success"
+     absolute
      v-model="snackbar"
      :timeout="timeout"
     >
@@ -18,7 +19,7 @@ export default {
         },
         timeout: {
             type: Number,
-            default: 2000
+            default: 3000
         },
         visible: {
             type: Boolean,
@@ -30,8 +31,8 @@ export default {
             get() {
                 return this.visible
             },
-            set(newVisible) {
-                return newVisible
+            set(visible) {
+                return visible
             }
         }
     }

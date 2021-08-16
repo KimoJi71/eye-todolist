@@ -1,5 +1,5 @@
 <template>
-    <v-dialog width="350" v-model="dialog">
+    <v-dialog width="350" v-model="dialog" persistent>
         <v-card>
             <v-card-title>
                 確定要<b class="red--text">{{action}}</b>嗎？
@@ -31,7 +31,7 @@ export default {
     props: {
         action: {
             type: String,
-            default: '執行',
+            default: '返回',
         },
         visible: {
             type: Boolean,

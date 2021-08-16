@@ -59,9 +59,8 @@
                                 v-for="(todo, idx) in todos"
                                 :key="idx"
                                 :todo="todo"
-                                @delete-todo="removeTodo(idx)"
-                            >
-                            </TodoItem>
+                                @delete-todo="(removeTodo(idx), removeInfo())"
+                            ></TodoItem>
                         </tbody>
                     </template>
                 </v-simple-table>
@@ -69,9 +68,8 @@
         </v-container>
         <SnackBar
          :text="text"
-         :timeout="2000"
          :visible="snackbarVisible"
-        ></SnackBar> 
+        ></SnackBar>
     </div>
 </template>
 
@@ -90,9 +88,9 @@ export default {
         return {
             //todo資料
             todos: [],
-            //Snackbar視窗
-            snackbarVisible: false,
-            text: ''
+            //snackbar視窗
+            text: '',
+            snackbarVisible: false
         }
     },
     methods: {
@@ -103,8 +101,13 @@ export default {
         //刪除
         removeTodo(idx) {
             this.todos.splice(idx, 1)
-            this.text = '刪除成功'
-            this.snackbarVisible = true
+        },
+        removeInfo() {
+            if(window.localStorage.getItem('isDeleteSuccess') === 'true') {
+                this.text = '刪除成功'
+                this.snackbarVisible = true
+                window.localStorage.removeItem('isDeleteSuccess')
+            }
         }
     },
     mounted() {
@@ -124,6 +127,18 @@ export default {
                 alert('不明錯誤')
             }
         })
+    },
+    updated() {
+        if(window.localStorage.getItem('isAddSuccess') === 'true') {
+            this.text = '新增成功'
+            this.snackbarVisible = true
+            window.localStorage.removeItem('isAddSuccess')
+        }
+        if(window.localStorage.getItem('isEditSuccess') === 'true') {
+            this.text = '更新成功'
+            this.snackbarVisible = true
+            window.localStorage.removeItem('isEditSuccess')
+        }
     }
 }
 </script>
