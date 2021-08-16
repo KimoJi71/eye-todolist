@@ -2,7 +2,7 @@
 
 ### 下載程式碼
 ```
-https://github.com/KimoJi71/eye-todolist.git
+git clone https://github.com/KimoJi71/eye-todolist.git
 ```
 
 ### 下載套件
