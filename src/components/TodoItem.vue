@@ -81,24 +81,26 @@ export default {
         },
         //刪除
         deleteTodo() {
-            this.$axios.delete(`/api/to-do-list/detail/${this.todo.to_do_id}`)
-            .then(res => {
-                if(res.data.message === "ok.") {
-                    window.localStorage.setItem('isDeleteSuccess', 'true')
-                    this.$emit('delete-todo')
-                }
-            })
-            .catch(err => {
-                if(err.response.status === 401) {
-                    if(confirm('請先登入') === true) {
-                        this.$router.push({name: 'login'})
+            if(localStorage.getItem('account') === null) {
+                this.$router.push({name: 'login'})
+            } else {
+                this.$axios.delete(`/api/to-do-list/detail/${this.todo.to_do_id}`)
+                .then(res => {
+                    if(res.data.message === "ok.") {
+                        window.localStorage.setItem('isDeleteSuccess', 'true')
+                        this.$emit('delete-todo')
                     }
-                } else if(err.response.status === 500) {
-                    alert('Server 端錯誤')
-                } else {
-                    alert('不明錯誤')
-                }
-            })
+                })
+                .catch(err => {
+                    if(err.response.status === 401) {
+                        this.$router.push({name: 'login'})
+                    } else if(err.response.status === 500) {
+                        alert('Server 端錯誤')
+                    } else {
+                        alert('不明錯誤')
+                    }
+                })
+            }
         }
     }
 }

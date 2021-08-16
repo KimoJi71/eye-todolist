@@ -3,16 +3,14 @@
     <v-main>
       <v-container class="fill-height" fluid>
         <v-row align="center" justify="center">
-          <v-col cols="12" sm="8" md="6">
-            <v-card class="elevation-8">
+          <v-col cols="12" sm="8" md="4">
+            <v-card class="elevation-5">
               <v-window>
                 <v-window-item>
                   <v-row>
                     <v-col cols="12" md="12">
                       <v-card-text class="mt-5">
-                        <h1 class="text-center
-                         display-1"
-                        >
+                        <h1 class="text-center display-1">
                           系統登入
                         </h1>
                         <div class="text-center mt-5">
@@ -36,11 +34,11 @@
                             >
                             </v-text-field>
                             <span class="red--text" v-if="error">{{error}}</span>
-                            <br v-if="error"><br v-if="error">
+                            <br><br v-if="error">
                             <v-btn
                              elevation="2"
-                             large
                              dark
+                             large
                              type="submit"
                             >
                               登入
@@ -82,6 +80,7 @@ export default {
       })
       .then(response => {
         if(response.status === 200) {
+          localStorage.setItem('account', this.account)
           this.$router.push({name: 'todo-list'})
         }
       })

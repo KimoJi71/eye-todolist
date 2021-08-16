@@ -15,8 +15,7 @@
                 <v-col cols="40" md="20" offset-md="20">
                     <v-btn 
                      class="mr-5"
-                     color="blue" 
-                     dark
+                     color="primary" 
                      @click="addTodo"
                     >
                         新增
@@ -66,31 +65,36 @@
                 </v-simple-table>
             </v-row>
         </v-container>
-        <SnackBar
-         :text="text"
-         :visible="snackbarVisible"
-        ></SnackBar>
+        <v-snackbar
+         color="success"
+         absolute
+         v-model="snackbar.visible"
+         timeout="3000"
+        >
+            {{snackbar.text}}
+            <v-icon class="mr-2">mdi-check-circle</v-icon>
+        </v-snackbar>
     </div>
 </template>
 
 <script>
 import Header from '../components/Header.vue'
 import TodoItem from '../components/TodoItem.vue'
-import SnackBar from '../components/SnackBar.vue'
 
 export default {
     components: {
         Header,
-        TodoItem,
-        SnackBar
+        TodoItem
     },
     data(){
         return {
             //todo資料
             todos: [],
             //snackbar視窗
-            text: '',
-            snackbarVisible: false
+            snackbar: {
+                text: null,
+                visible: false
+            }
         }
     },
     methods: {
@@ -103,41 +107,49 @@ export default {
             this.todos.splice(idx, 1)
         },
         removeInfo() {
-            if(window.localStorage.getItem('isDeleteSuccess') === 'true') {
-                this.text = '刪除成功'
-                this.snackbarVisible = true
-                window.localStorage.removeItem('isDeleteSuccess')
+            if(localStorage.getItem('isDeleteSuccess') === 'true') {
+                this.snackbar = {
+                    text: '刪除成功',
+                    visible: true,
+                }
+                localStorage.removeItem('isDeleteSuccess')
             }
         }
     },
     mounted() {
-        //獲取todo清單
-        this.$axios.get('/api/to-do-list/list')
-        .then(res =>  {
-            this.todos = res.data.result
-        })
-        .catch(err => {
-            if(err.response.status === 401) {
-                if(confirm('請先登入') === true) {
+        if(localStorage.getItem('account') === null) {
+            this.$router.push({name: 'login'})
+        } else {
+            //獲取todo清單
+            this.$axios.get('/api/to-do-list/list')
+            .then(res =>  {
+                this.todos = res.data.result
+            })
+            .catch(err => {
+                if(err.response.status === 401) {
                     this.$router.push({name: 'login'})
+                } else if(err.response.status === 500) {
+                    alert('Server 端錯誤')
+                } else {
+                    alert('不明錯誤')
                 }
-            } else if(err.response.status === 500) {
-                alert('Server 端錯誤')
-            } else {
-                alert('不明錯誤')
-            }
-        })
+            })
+        }
     },
     updated() {
-        if(window.localStorage.getItem('isAddSuccess') === 'true') {
-            this.text = '新增成功'
-            this.snackbarVisible = true
-            window.localStorage.removeItem('isAddSuccess')
+        if(localStorage.getItem('isAddSuccess') === 'true') {
+            this.snackbar = {
+                text: '新增成功',
+                visible: true
+            }
+            localStorage.removeItem('isAddSuccess')
         }
-        if(window.localStorage.getItem('isEditSuccess') === 'true') {
-            this.text = '更新成功'
-            this.snackbarVisible = true
-            window.localStorage.removeItem('isEditSuccess')
+        if(localStorage.getItem('isEditSuccess') === 'true') {
+            this.snackbar = {
+                text: '更新成功',
+                visible: true
+            }
+            localStorage.removeItem('isEditSuccess')
         }
     }
 }

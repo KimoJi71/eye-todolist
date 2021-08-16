@@ -36,7 +36,7 @@
                                  dense
                                  type="text"
                                  v-model="todoDetail.subject"
-                                 :rules="[v => !!v || '請輸入主題']"
+                                 :rules="[v => !!v || '必填']"
                                 >
                                     {{todoDetail.subject}}
                                 </v-text-field>
@@ -61,7 +61,7 @@
                                  outlined
                                  dense
                                  v-model="todoDetail.level"
-                                 :rules="[v => /(?=.*\d)/.test(v) || '請輸入重要程度']"
+                                 :rules="[v => /(?=.*\d)/.test(v) || '必填']"
                                 ></v-select>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -71,7 +71,7 @@
                                  dense
                                  type="text"
                                  v-model="todoDetail.brief"
-                                 :rules="[v => !!v || '請輸入簡介']"
+                                 :rules="[v => !!v || '必填']"
                                 >
                                     {{todoDetail.brief}}
                                 </v-text-field>
@@ -83,7 +83,7 @@
                                  dense
                                  type="text"
                                  v-model="todoDetail.author"
-                                 :rules="[v => !!v || '請輸入撰寫者']"
+                                 :rules="[v => !!v || '必填']"
                                 >
                                     {{todoDetail.author}}
                                 </v-text-field>
@@ -96,7 +96,7 @@
                                  type="text"
                                  rows="3"
                                  v-model="todoDetail.content"
-                                 :rules="[v => !!v || '請輸入詳細內容']"
+                                 :rules="[v => !!v || '必填']"
                                 >
                                     {{todoDetail.content}}
                                 </v-textarea>
@@ -115,7 +115,7 @@
                              color="warning"
                              @click.stop="openBackDialog"
                             >
-                                返回
+                                取消
                             </v-btn>
                         </v-row>
                     </v-form>
@@ -129,7 +129,7 @@
          @onConfirm="submit"
         ></UpdateConfirmDialog>
         <BackConfirmDialog
-         :action="'返回'"
+         :action="'取消'"
          :visible="backDialogVisible"
          @onCancel="closeBackDialog"
          @onConfirm="backTodo"
@@ -159,8 +159,8 @@ export default {
             //表單欄位驗證
             valid: false,      
             timeRules: [
-                v => !!v || '請輸入預約時間',
-                v => /(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d)/.test(v) || '不符合時間格式',
+                v => !!v || '必填',
+                v => /(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d)/.test(v) || '請符合格式：YYYY-MM-DD HH:SS',
             ],
             //Dialog視窗
             updateDialogVisible: false,
@@ -168,14 +168,14 @@ export default {
         }
     },
     methods: {
-        //儲存視窗
+        //儲存Dialog視窗
         openUpdateDialog() {
             this.updateDialogVisible = true
         },
         closeUpdateDialog() {
             this.updateDialogVisible = false
         },
-        //返回視窗
+        //返回Dialog視窗
         openBackDialog() {
             this.backDialogVisible = true
         },
@@ -189,9 +189,7 @@ export default {
         //錯誤處理
         catchErr(err) {
             if(err.response.status === 401) {
-                if(confirm('請先登入') === true) {
-                    this.$router.push({name: 'login'})
-                }
+                this.$router.push({name: 'login'})
             } else if(err.response.status === 500) {
                 alert('Server 端錯誤')
             } else {
@@ -211,7 +209,7 @@ export default {
             })
             .then(res => {
                 if(res.data.message == "ok.") {
-                    window.localStorage.setItem('isEditSuccess', 'true')
+                    localStorage.setItem('isEditSuccess', 'true')
                     this.$router.push({name: 'todo-list'})
                 }
             })
@@ -222,15 +220,19 @@ export default {
     },
     mixins: [timeFormat],
     mounted() {
-        //獲取todo詳細內容
-        this.$axios.get(`/api/to-do-list/detail/${this.$route.params.to_do_id}?type=json`)
-        .then(res => {
-            this.todoDetail = res.data.result
-            this.modified_time = this.timeFormat(new Date)
-        })
-        .catch(err => {
-            this.catchErr(err)
-        })
+        if(localStorage.getItem('account') === null) {
+            this.$router.push({name: 'login'})
+        } else {
+            //獲取todo詳細內容
+            this.$axios.get(`/api/to-do-list/detail/${this.$route.params.to_do_id}?type=json`)
+            .then(res => {
+                this.todoDetail = res.data.result
+                this.modified_time = this.timeFormat(new Date)
+            })
+            .catch(err => {
+                this.catchErr(err)
+            })
+        }
     }
 }
 </script>

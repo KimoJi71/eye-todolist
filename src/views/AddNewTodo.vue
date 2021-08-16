@@ -31,7 +31,7 @@
                                  dense
                                  type="text"
                                  v-model="subject"
-                                 :rules="[v => !!v || '請輸入主題']"
+                                 :rules="[v => !!v || '必填']"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="4">
@@ -52,7 +52,7 @@
                                  outlined
                                  dense
                                  v-model="level"
-                                 :rules="[v => /(?=.*\d)/.test(v) || '請選擇重要程度']"
+                                 :rules="[v => /(?=.*\d)/.test(v) || '必填']"
                                 ></v-select>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -62,7 +62,7 @@
                                  dense
                                  type="text"
                                  v-model="brief"
-                                 :rules="[v => !!v || '請輸入簡介']"
+                                 :rules="[v => !!v || '必填']"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="6" md="6">
@@ -72,7 +72,7 @@
                                  dense
                                  type="text"
                                  v-model="author"
-                                 :rules="[v => !!v || '請輸入撰寫者']"
+                                 :rules="[v => !!v || '必填']"
                                 ></v-text-field>
                             </v-col>
                             <v-col cols="12" sm="12" md="12">
@@ -83,7 +83,7 @@
                                  type="text"
                                  rows="3"
                                  v-model="content"
-                                 :rules="[v => !!v || '請輸入詳細內容']"
+                                 :rules="[v => !!v || '必填']"
                                 ></v-textarea>
                             </v-col>
                         </v-row>
@@ -100,7 +100,7 @@
                              color="warning"
                              @click.stop="openBackDialog"
                             >
-                                返回
+                                取消
                             </v-btn>
                         </v-row>
                     </v-form>
@@ -115,7 +115,7 @@
          @onConfirm="submit"
         ></UpdateConfirmDialog>
         <BackConfirmDialog
-         :action="'返回'"
+         :action="'取消'"
          :visible="backDialogVisible"
          @onCancel="closeBackDialog"
          @onConfirm="backTodo"
@@ -151,8 +151,8 @@ export default {
             //表單欄位驗證
             valid: false,
             timeRules: [
-                v => !!v || '請輸入預約時間',
-                v => /(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d)/.test(v) || '不符合時間格式',
+                v => !!v || '必填',
+                v => /(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d)/.test(v) || '請符合格式：YYYY-MM-DD HH:SS',
             ],
             //Dialog視窗
             updateDialogVisible: false,
@@ -181,9 +181,7 @@ export default {
         //錯誤處理
         catchErr(err) {
             if(err.response.status === 401) {
-                if(confirm('請先登入') === true) {
-                    this.$router.push({name: 'login'})
-                }
+                this.$router.push({name: 'login'})
             } else if(err.response.status === 500) {
                 alert('Server 端錯誤')
             } else {
@@ -203,7 +201,7 @@ export default {
             })
             .then(res => {
                 if(res.data.message == "ok.") {
-                    window.localStorage.setItem('isAddSuccess', 'true')
+                    localStorage.setItem('isAddSuccess', 'true')
                     this.$router.push({name: 'todo-list'})
                 }
             })
@@ -214,15 +212,19 @@ export default {
     },
     mixins: [timeFormat],
     mounted() {
-        //獲取最新todo編號
-        this.$axios.get('/api/to-do-list/the-newest-id')
-        .then(res => {
-            this.to_do_id = res.data.result
-            this.modified_time = this.timeFormat(new Date)
-        })
-        .catch(err => {
-            this.catchErr(err)
-        })
+        if(localStorage.getItem('account') === null) {
+            this.$router.push({name: 'login'})
+        } else {
+            //獲取最新todo編號
+            this.$axios.get('/api/to-do-list/the-newest-id')
+            .then(res => {
+                this.to_do_id = res.data.result
+                this.modified_time = this.timeFormat(new Date)
+            })
+            .catch(err => {
+                this.catchErr(err)
+            })
+        }
     }
 }
 </script>

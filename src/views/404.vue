@@ -30,6 +30,11 @@ export default {
         backTodo() {
             this.$router.push({name: 'todo-list'})
         }
+    },
+    created() {
+        if(localStorage.getItem('account') === null) {
+            this.$router.push({name: 'login'})
+        }
     }
 }
 </script>
