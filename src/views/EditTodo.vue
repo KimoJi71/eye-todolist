@@ -103,15 +103,17 @@
                                 <v-subheader class="pa-0">重要程度</v-subheader>
                             </v-col>
                             <v-col class="d-flex">
-                                <span class="grey--text text-caption ml-2">
+                                <span class="grey--text text-caption mt-3 ml-2">
                                     ({{level * 2}})
                                 </span>
                                 <v-rating
                                 v-model="level"
+                                class="mt-2"
                                 color="yellow darken-3"
                                 background-color="grey"
-                                empty-icon="$ratingFull"
+                                empty-icon="$ratingEmpty"
                                 clearable
+                                dense
                                 half-increments
                                 hover/>
                             </v-col>
@@ -261,25 +263,28 @@ export default {
             } catch(err) {
                 this.catchErr(err)
             }
+        },
+        async getTodoDetail() {
+            if(localStorage.getItem('account') === null) {
+                this.$router.push({name: 'login'}).catch(() => {})
+            } else {
+                //獲取todo詳細內容
+                try {
+                    const response = await this.$api.todolist.getTodoDetail(this.$route.params.to_do_id)
+                    this.todoDetail = response.result
+                    this.modified_time = this.timeFormat(new Date)
+                    this.date = this.todoDetail.reserved_time.split(' ')[0]
+                    this.time = this.todoDetail.reserved_time.split(' ')[1]
+                    this.level = this.todoDetail.level / 2
+                } catch(err) {
+                    this.catchErr(err)
+                }
+            }
         }
     },
     mixins: [timeFormat],
-    async mounted() {
-        if(localStorage.getItem('account') === null) {
-            this.$router.push({name: 'login'}).catch(() => {})
-        } else {
-            //獲取todo詳細內容
-            try {
-                const response = await this.$api.todolist.getTodoDetail(this.$route.params.to_do_id)
-                this.todoDetail = response.data.result
-                this.modified_time = this.timeFormat(new Date)
-                this.date = this.todoDetail.reserved_time.split(' ')[0]
-                this.time = this.todoDetail.reserved_time.split(' ')[1]
-                this.level = this.todoDetail.level / 2
-            } catch(err) {
-                this.catchErr(err)
-            }
-        }
+    mounted() {
+        this.getTodoDetail()
     }
 }
 </script>

@@ -109,22 +109,25 @@ export default {
                 }
                 localStorage.removeItem('isDeleteSuccess')
             }
-        }
-    },
-    async mounted() {
-        if(localStorage.getItem('account') === null) {
-            this.$router.push({name: 'login'}).catch(() => {})
-        } else {
-            //取得todo清單
-            try {
-                const response = await this.$api.todolist.getTodoList()
-                this.todos = response.data.result
-            } catch(err) {
-                if(err.response.status === 401) {
-                    this.$router.push({name: 'login'}).catch(() => {})
+        },
+        async getTodoList() {
+            if(localStorage.getItem('account') === null) {
+                this.$router.push({name: 'login'}).catch(() => {})
+            } else {
+                //取得todo清單
+                try {
+                    const response = await this.$api.todolist.getTodoList()
+                    this.todos = response.result
+                } catch(err) {
+                    if(err.response.status === 401) {
+                        this.$router.push({name: 'login'}).catch(() => {})
+                    }
                 }
             }
         }
+    },
+    mounted() {
+        this.getTodoList()
     },
     updated() {
         if(localStorage.getItem('isAddSuccess') === 'true') {

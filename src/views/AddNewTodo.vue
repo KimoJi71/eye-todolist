@@ -97,15 +97,17 @@
                                 <v-subheader class="pa-0">重要程度</v-subheader>
                             </v-col>
                             <v-col class="d-flex">
-                                <span class="grey--text text-caption ml-2">
+                                <span class="grey--text text-caption mt-3 ml-2">
                                     ({{level * 2}})
                                 </span>
                                 <v-rating
                                 v-model="level"
+                                class="mt-2"
                                 color="yellow darken-3"
                                 background-color="grey"
-                                empty-icon="$ratingFull"
+                                empty-icon="$ratingEmpty"
                                 clearable
+                                dense
                                 half-increments
                                 hover/>
                             </v-col>
@@ -265,22 +267,25 @@ export default {
             } catch(err) {
                 this.catchErr(err)
             }
+        },
+        async getTodoID() {
+            if(localStorage.getItem('account') === null) {
+                this.$router.push({name: 'login'}).catch(() => {})
+            } else {
+                //獲取最新todo編號
+                try {
+                    const response = await this.$api.todolist.getTodoID()
+                    this.to_do_id = response.result
+                    this.modified_time = this.timeFormat(new Date)
+                } catch(err) {
+                    this.catchErr(err)
+                }
+            }
         }
     },
     mixins: [timeFormat],
-    async mounted() {
-        if(localStorage.getItem('account') === null) {
-            this.$router.push({name: 'login'}).catch(() => {})
-        } else {
-            //獲取最新todo編號
-            try {
-                const response = await this.$api.todolist.getTodoID()
-                this.to_do_id = response.data.result
-                this.modified_time = this.timeFormat(new Date)
-            } catch(err) {
-                this.catchErr(err)
-            }
-        }
+    mounted() {
+        this.getTodoID()
     }
 }
 </script>

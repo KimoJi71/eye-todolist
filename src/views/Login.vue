@@ -82,8 +82,8 @@ export default {
         localStorage.setItem('account', this.account)
         this.$router.push({name: 'todo-list'}).catch(() => {})
       } catch(err) {
-        if(err.response.status === 400) {
-          this.error = '帳號密碼欄位有誤'
+        if (err.response.status === 400) {
+          this.error = '帳號或密碼有誤'
         }
       }
     }
