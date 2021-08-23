@@ -73,26 +73,19 @@ export default {
   },
   methods: {
     //會員登入
-    login() {
-      this.$axios.post('/api/auth', {
-        account: this.account,
-        passwd: this.passwd
-      })
-      .then(response => {
-        if(response.status === 200) {
-          localStorage.setItem('account', this.account)
-          this.$router.push({name: 'todo-list'})
-        }
-      })
-      .catch(err => {
+    async login() {
+      try {
+        await this.$api.auth.login({
+          account: this.account,
+          passwd: this.passwd
+        })
+        localStorage.setItem('account', this.account)
+        this.$router.push({name: 'todo-list'}).catch(() => {})
+      } catch(err) {
         if(err.response.status === 400) {
           this.error = '帳號密碼欄位有誤'
-        } else if(err.response.status === 500) {
-          alert('Server 端錯誤')
-        } else {
-          alert('不明錯誤')
         }
-      })
+      }
     }
   },
   watch: {

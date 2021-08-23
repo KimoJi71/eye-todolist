@@ -1,9 +1,7 @@
 <template>
     <tr>
         <td>{{todo.to_do_id}}</td>
-        <td>
-            {{todo.subject}}
-        </td>
+        <td>{{todo.subject}}</td>
         <td>{{todo.reserved_time}}</td>
         <td>{{todo.brief}}</td>
         <td>{{todo.level}}</td>
@@ -54,7 +52,7 @@
 </template>
 
 <script>
-import UpdateConfirmDialog from './UpdateConfirmDialog.vue'
+import UpdateConfirmDialog from './ConfirmDialogUpdate.vue'
 
 export default {
     props: ['todo'],
@@ -78,28 +76,22 @@ export default {
         //編輯
         editTodo() {
             this.$router.push({name: 'edit-todo', params: {to_do_id: this.todo.to_do_id}})
+            .catch(() => {})
         },
         //刪除
-        deleteTodo() {
+        async deleteTodo() {
             if(localStorage.getItem('account') === null) {
-                this.$router.push({name: 'login'})
+                this.$router.push({name: 'login'}).catch(() => {})
             } else {
-                this.$axios.delete(`/api/to-do-list/detail/${this.todo.to_do_id}`)
-                .then(res => {
-                    if(res.data.message === "ok.") {
-                        window.localStorage.setItem('isDeleteSuccess', 'true')
-                        this.$emit('delete-todo')
-                    }
-                })
-                .catch(err => {
+                try {
+                    await this.$api.todolist.deleteTodoDetail(this.todo.to_do_id)
+                    window.localStorage.setItem('isDeleteSuccess', 'true')
+                    this.$emit('delete-todo')
+                } catch(err) {
                     if(err.response.status === 401) {
-                        this.$router.push({name: 'login'})
-                    } else if(err.response.status === 500) {
-                        alert('Server 端錯誤')
-                    } else {
-                        alert('不明錯誤')
+                        this.$router.push({name: 'login'}).catch(() => {})
                     }
-                })
+                }
             }
         }
     }

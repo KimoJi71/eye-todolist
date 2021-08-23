@@ -5,7 +5,7 @@
                 確定要<b class="red--text">{{action}}</b>嗎？
             </v-card-title>
             <v-card-actions>
-                <v-spacer></v-spacer>
+                <v-spacer/>
                 <v-btn
                  class="mr-2"
                  color="primary"
@@ -31,24 +31,24 @@ export default {
     props: {
         action: {
             type: String,
-            default: '返回',
+            default: '返回'
         },
         visible: {
             type: Boolean,
-            default: false,
+            default: false
         }
     },
     computed: {
         dialog() {
-            return this.visible;
+            return this.visible
         }
     },
     methods: {
         onConfirm() {
-            this.$emit('onConfirm');
+            this.$emit('onConfirm')
         },
         onCancel() {
-            this.$emit('onCancel');
+            this.$emit('onCancel')
         }
     }
 }

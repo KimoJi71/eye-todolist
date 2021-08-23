@@ -1,14 +1,10 @@
 <template>
     <div>
-        <Header></Header>
+        <Header/>
         <v-container class="fill-height mt-10" fluid>
             <v-row  align="center" justify="center" no-gutters>
                 <v-col sm="10" md="20">
-                    <h1
-                        class="text-left
-                        blue-gray--text
-                        ml-5"
-                    >
+                    <h1 class="text-left blue-gray--text ml-5">
                         To Do List 清單
                     </h1>
                 </v-col>
@@ -23,7 +19,7 @@
                 </v-col>
             </v-row>
             <v-row class="ma-5">
-                <v-divider></v-divider>
+                <v-divider/>
             </v-row>
             <v-row class="ma-5" align="center" justify="center">
                 <v-simple-table fixed-header height="400">
@@ -55,11 +51,10 @@
                         </thead>
                         <tbody>
                             <TodoItem
-                                v-for="(todo, idx) in todos"
-                                :key="idx"
-                                :todo="todo"
-                                @delete-todo="(removeTodo(idx), removeInfo())"
-                            ></TodoItem>
+                            v-for="(todo, idx) in todos"
+                            :key="idx"
+                            :todo="todo"
+                            @delete-todo="(removeTodo(idx), removeInfo())"/>
                         </tbody>
                     </template>
                 </v-simple-table>
@@ -100,7 +95,7 @@ export default {
     methods: {
         //開啟新增頁面
         addTodo() {
-            this.$router.push('/add-todo')
+            this.$router.push('/add-todo').catch(() => {})
         },
         //刪除
         removeTodo(idx) {
@@ -116,24 +111,19 @@ export default {
             }
         }
     },
-    mounted() {
+    async mounted() {
         if(localStorage.getItem('account') === null) {
-            this.$router.push({name: 'login'})
+            this.$router.push({name: 'login'}).catch(() => {})
         } else {
-            //獲取todo清單
-            this.$axios.get('/api/to-do-list/list')
-            .then(res =>  {
-                this.todos = res.data.result
-            })
-            .catch(err => {
+            //取得todo清單
+            try {
+                const response = await this.$api.todolist.getTodoList()
+                this.todos = response.data.result
+            } catch(err) {
                 if(err.response.status === 401) {
-                    this.$router.push({name: 'login'})
-                } else if(err.response.status === 500) {
-                    alert('Server 端錯誤')
-                } else {
-                    alert('不明錯誤')
+                    this.$router.push({name: 'login'}).catch(() => {})
                 }
-            })
+            }
         }
     },
     updated() {

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Header></Header>
+        <Header/>
         <v-container class="fill-height mt-10" fluid>
             <v-row justify="center" align="center">
                 <v-col cols="auto">
@@ -28,12 +28,12 @@ export default {
     },
     methods: {
         backTodo() {
-            this.$router.push({name: 'todo-list'})
+            this.$router.push({name: 'todo-list'}).catch(() => {})
         }
     },
     created() {
         if(localStorage.getItem('account') === null) {
-            this.$router.push({name: 'login'})
+            this.$router.push({name: 'login'}).catch(() => {})
         }
     }
 }

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <Header></Header>
+        <Header/>
         <!-- Todo欄位資料 -->
         <v-container class="fill-height mt-10" fluid>
             <v-row  align="center" justify="center" no-gutters>
@@ -9,13 +9,13 @@
                 </v-col>
             </v-row>
             <v-row class="ma-5">
-                <v-divider></v-divider>
+                <v-divider/>
             </v-row>
             <v-row class="ma-5" align="center" justify="center">
                 <v-col sm="10">
                     <v-form v-model="valid">
                         <v-row>
-                            <v-col cols="12" sm="6">
+                            <v-col cols="12" sm="10">
                                 <label>建立時間：</label>
                                 <span>{{modified_time}}</span>
                                 <br>
@@ -24,81 +24,144 @@
                             </v-col>
                         </v-row>
                         <v-row>
-                            <v-col cols="12" sm="6" md="4">
+                            <!-- 主題 -->
+                            <v-col cols="auto">
+                                <v-subheader class="pa-0">主&emsp;&emsp;題</v-subheader>
+                            </v-col>
+                            <v-col>
                                 <v-text-field
-                                 label="主題"
-                                 outlined
-                                 dense
-                                 type="text"
-                                 v-model="subject"
-                                 :rules="[v => !!v || '必填']"
-                                ></v-text-field>
+                                    outlined
+                                    dense
+                                    type="text"
+                                    v-model="subject"
+                                    :rules="[v => !!v || '必填']"/>
                             </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-text-field
-                                 label="預約時間"
-                                 placeholder="格式：YYYY-MM-DD HH:MM"
-                                 outlined
-                                 dense
-                                 type="text"
-                                 v-model="reserved_time"
-                                 :rules="timeRules"
-                                ></v-text-field>
+                            <!-- 預約時間 -->
+                            <v-col cols="auto">
+                                <v-subheader class="pa-0">預約時間</v-subheader>
                             </v-col>
-                            <v-col cols="12" sm="6" md="4">
-                                <v-select
-                                 label="重要程度"
-                                 :items="degree"
-                                 outlined
-                                 dense
-                                 v-model="level"
-                                 :rules="[v => /(?=.*\d)/.test(v) || '必填']"
-                                ></v-select>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="6">
-                                <v-text-field
-                                 label="簡介"
-                                 outlined
-                                 dense
-                                 type="text"
-                                 v-model="brief"
-                                 :rules="[v => !!v || '必填']"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="6" md="6">
-                                <v-text-field
-                                 label="撰寫者" 
-                                 outlined
-                                 dense
-                                 type="text"
-                                 v-model="author"
-                                 :rules="[v => !!v || '必填']"
-                                ></v-text-field>
-                            </v-col>
-                            <v-col cols="12" sm="12" md="12">
-                                <v-textarea
-                                 label="詳細內容" 
-                                 outlined
-                                 dense
-                                 type="text"
-                                 rows="3"
-                                 v-model="content"
-                                 :rules="[v => !!v || '必填']"
-                                ></v-textarea>
+                            <v-col class="d-flex">
+                                <!-- 日期 -->
+                                <v-menu
+                                v-model="dateMenu"
+                                :close-on-content-click="false"
+                                transition="scale-transition"
+                                offset-y
+                                max-width="290"
+                                min-width="auto"
+                                >
+                                    <template v-slot:activator="{on, attrs}">
+                                        <v-text-field
+                                        v-model="date"
+                                        outlined
+                                        dense
+                                        readonly
+                                        :rules="[v => !!v || '必填']"
+                                        v-bind="attrs"
+                                        v-on="on"/>
+                                    </template>
+                                    <v-date-picker
+                                    v-model="date"
+                                    no-title
+                                    scrollable
+                                    :min="modified_time.split(' ')[0]"
+                                    @input="dateMenu = false"/>
+                                </v-menu>
+                                <!-- 時間 -->
+                                <v-menu
+                                v-model="timeMenu"
+                                :close-on-content-click="false"
+                                transition="scale-transition"
+                                offset-y
+                                max-width="290"
+                                min-width="290"
+                                >
+                                    <template v-slot:activator="{on, attrs}">
+                                        <v-text-field
+                                        class="ml-2"
+                                        v-model="time"
+                                        outlined
+                                        dense
+                                        readonly
+                                        :rules="[v => !!v || '必填']"
+                                        v-bind="attrs"
+                                        v-on="on"/>
+                                    </template>
+                                    <v-time-picker v-model="time" format="24hr" full-width/>
+                                </v-menu>
                             </v-col>
                         </v-row>
+                        <v-row>
+                            <!-- 重要程度 -->
+                            <v-col cols="auto">
+                                <v-subheader class="pa-0">重要程度</v-subheader>
+                            </v-col>
+                            <v-col class="d-flex">
+                                <span class="grey--text text-caption ml-2">
+                                    ({{level * 2}})
+                                </span>
+                                <v-rating
+                                v-model="level"
+                                color="yellow darken-3"
+                                background-color="grey"
+                                empty-icon="$ratingFull"
+                                clearable
+                                half-increments
+                                hover/>
+                            </v-col>
+                            <!-- 簡介 -->
+                            <v-col cols="auto">
+                                <v-subheader class="pa-0">簡&emsp;&emsp;介</v-subheader>
+                            </v-col>
+                            <v-col>
+                                <v-text-field
+                                outlined
+                                dense
+                                type="text"
+                                v-model="brief"
+                                :rules="[v => !!v || '必填']"/>
+                            </v-col>
+                            <!-- 撰寫者 -->
+                            <v-col cols="auto">
+                                <v-subheader class="pa-0">撰&ensp;寫&ensp;者</v-subheader>
+                            </v-col>
+                            <v-col>
+                                <v-text-field
+                                outlined
+                                dense
+                                type="text"
+                                v-model="author"
+                                :rules="[v => !!v || '必填']"/>
+                            </v-col>
+                        </v-row>
+                        <v-row>
+                            <!-- 詳細內容 -->
+                            <v-col cols="auto">
+                                <v-subheader class="pa-0">詳細內容</v-subheader>
+                            </v-col>
+                            <v-col>
+                                <v-textarea
+                                outlined
+                                dense
+                                type="text"
+                                rows="3"
+                                v-model="content"
+                                :rules="[v => !!v || '必填']"/>
+                            </v-col>
+                        </v-row>
+                        <!-- 操作按鈕 -->
                         <v-row justify="center" align="center">
                             <v-btn
-                             class="mr-5"
-                             color="success"
-                             :disabled="!valid"
-                             @click.stop="openUpdateDialog"
+                            class="mr-5"
+                            color="success"
+                            :disabled="!valid"
+                            @click.stop="openUpdateDialog"
                             >
                                 儲存
                             </v-btn>
                             <v-btn
-                             color="warning"
-                             @click.stop="openBackDialog"
+                            color="warning"
+                            @click.stop="openBackDialog"
                             >
                                 取消
                             </v-btn>
@@ -112,22 +175,20 @@
          :action="'儲存'"
          :visible="updateDialogVisible"
          @onCancel="closeUpdateDialog"
-         @onConfirm="submit"
-        ></UpdateConfirmDialog>
+         @onConfirm="submit"/>
         <BackConfirmDialog
          :action="'取消'"
          :visible="backDialogVisible"
          @onCancel="closeBackDialog"
-         @onConfirm="backTodo"
-        ></BackConfirmDialog>
+         @onConfirm="backTodo"/>
     </div>
 </template>
 
 <script>
 import Header from '../components/Header.vue'
 import timeFormat from '../mixins/timeFormat'
-import BackConfirmDialog from '../components/BackConfirmDialog.vue'
-import UpdateConfirmDialog from '../components/UpdateConfirmDialog.vue'
+import BackConfirmDialog from '../components/ConfirmDialogBack.vue'
+import UpdateConfirmDialog from '../components/ConfirmDialogUpdate.vue'
 
 export default {
     components: {
@@ -137,26 +198,29 @@ export default {
     },
     data() {
         return {
-            //重要程度等級
-            degree: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            //預約時間選擇器
+            dateMenu: false,
+            timeMenu: false,
+            date: '',
+            time: '',
             //todo資料
             to_do_id: '',
             subject: '',
             modified_time: '',
-            reserved_time: '',
-            level: '',
+            level: 0,
             brief: '',
             author: '',
             content: '',
             //表單欄位驗證
             valid: false,
-            timeRules: [
-                v => !!v || '必填',
-                v => /(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d)/.test(v) || '請符合格式：YYYY-MM-DD HH:SS',
-            ],
             //Dialog視窗
             updateDialogVisible: false,
             backDialogVisible: false
+        }
+    },
+    computed: {
+        reserved_time() {
+            return this.date + ' ' + this.time
         }
     },
     methods: {
@@ -176,54 +240,46 @@ export default {
         },
         //返回
         backTodo() {
-            this.$router.push({name: 'todo-list'})
+            this.$router.push({name: 'todo-list'}).catch(() => {})
         },
         //錯誤處理
         catchErr(err) {
             if(err.response.status === 401) {
-                this.$router.push({name: 'login'})
-            } else if(err.response.status === 500) {
-                alert('Server 端錯誤')
-            } else {
-                alert('不明錯誤')
+                this.$router.push({name: 'login'}).catch(() => {})
             }
         },
         //儲存
-        submit() {
-            this.$axios.put(`/api/to-do-list/detail/${this.to_do_id}`, {
-                to_do_id: this.to_do_id,
-                subject: this.subject,
-                reserved_time: this.reserved_time,
-                level: this.level,
-                brief: this.brief,
-                author: this.author,
-                content: this.content
-            })
-            .then(res => {
-                if(res.data.message == "ok.") {
-                    localStorage.setItem('isAddSuccess', 'true')
-                    this.$router.push({name: 'todo-list'})
-                }
-            })
-            .catch(err => {
+        async submit() {
+            try {
+                await this.$api.todolist.updateTodoDetail(this.to_do_id, {
+                    to_do_id: this.to_do_id,
+                    subject: this.subject,
+                    reserved_time: this.reserved_time,
+                    level: this.level * 2,
+                    brief: this.brief,
+                    author: this.author,
+                    content: this.content
+                })
+                localStorage.setItem('isAddSuccess', 'true')
+                this.$router.push({name: 'todo-list'}).catch(() => {})
+            } catch(err) {
                 this.catchErr(err)
-            })
+            }
         }
     },
     mixins: [timeFormat],
-    mounted() {
+    async mounted() {
         if(localStorage.getItem('account') === null) {
-            this.$router.push({name: 'login'})
+            this.$router.push({name: 'login'}).catch(() => {})
         } else {
             //獲取最新todo編號
-            this.$axios.get('/api/to-do-list/the-newest-id')
-            .then(res => {
-                this.to_do_id = res.data.result
+            try {
+                const response = await this.$api.todolist.getTodoID()
+                this.to_do_id = response.data.result
                 this.modified_time = this.timeFormat(new Date)
-            })
-            .catch(err => {
+            } catch(err) {
                 this.catchErr(err)
-            })
+            }
         }
     }
 }
